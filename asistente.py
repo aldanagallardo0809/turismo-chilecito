@@ -1,7 +1,7 @@
 def estado_inicial():
     return {}
 
-def responder(mensaje, estado):
+def obtener_respuesta_asistente(mensaje, estado):
     pedido = mensaje.lower().strip()
 
     if pedido == "lugares turisticos" or pedido == "1":
