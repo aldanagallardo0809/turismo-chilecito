@@ -86,27 +86,75 @@
         </section>
     </main>
 
+    <!-- Sección del Asistente Turístico Virtual integrado con el servidor de Python -->
+    <section>
+        <div class="card-marco">
+            <h2 class="sub-title">Asistente Turístico de Chilecito</h2>
+            <p>Consultá opciones sobre lugares, gastronomía y alojamiento interactuando con nuestro asistente.</p>
+            
+            <div id="chat-box" style="width: 100%; max-width: 750px; height: 280px; border: solid 2px #d8e2dc; border-radius: 1.2rem; overflow-y: scroll; padding: 15px; margin-bottom: 20px; background: #fdfae7; display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: #e9f5db; padding: 10px; border-radius: 1rem; align-self: flex-start; font-size: 1.6rem; color: #4f5d2f;">
+                    Hola soy tu asistente turístico de Chilecito La Rioja<br>
+                    --- ¿Qué deseas pedir? ---<br>
+                    1. Lugares turisticos<br>
+                    2. Lugares para comer<br>
+                    3. Lugares para pasar el rato<br>
+                    4. Salir
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; width: 100%; max-width: 750px;">
+                <input type="text" id="userInput" placeholder="Escribí tu opción (1, 2, 3 o 4)..." style="flex: 1; padding: 12px; font-size: 1.6rem; border: solid 2px #d8e2dc; border-radius: 1rem;" autocomplete="off" />
+                <button onclick="enviarMensaje()" style="padding: 12px 25px; font-size: 1.6rem; font-family: var(--title-font); background: var(--title-color); color: #fefae0; border: none; border-radius: 1rem; cursor: pointer;">Enviar</button>
+            </div>
+        </div>
+    </section>
+
     <footer>
         <p>Turismo Chilecito - Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Sección de formulario adaptada a las etiquetas básicas explicadas en el dossier (sección 2.3 y 2.6) -->
-    <section>
-        <div class="card-marco">
-            <h2 class="sub-title">Contacto y Consultas</h2>
-            <p>Escribinos tu nombre y consulta para recibir más información sobre el destino.</p>
-            
-            <form>
-                <p>Nombre:</p>
-                <input type="text" placeholder="Tu nombre aquí" style="width: 100%; padding: 10px; margin-bottom: 15px;">
-                
-                <p>Correo electrónico:</p>
-                <input type="email" placeholder="correo@ejemplo.com" style="width: 100%; padding: 10px; margin-bottom: 15px;">
-                
-                <button type="submit" style="padding: 10px 20px; background: var(--title-color); color: white; border: none;">Enviar Mensaje</button>
-            </form>
-        </div>
-    </section>
+    <!-- Lógica de conexión con el servidor Python (Render) -->
+    <script>
+        let estado = {};
 
+        async function enviarMensaje() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chat-box');
+            const mensaje = input.value.trim();
+
+            if (!mensaje) return;
+
+            // Mostrar mensaje del usuario
+            chatBox.innerHTML += `<div style="background: #d4a373; color: white; padding: 10px; border-radius: 1rem; align-self: flex-end; font-size: 1.6rem;">${mensaje}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const respuesta = await fetch('https://turismo-chilecito.onrender.com/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mensaje: mensaje, estado: estado })
+                });
+
+                const datos = await respuesta.json();
+                if (datos.respuesta) {
+                    const textoFormateado = datos.respuesta.replace(/\n/g, '<br>');
+                    chatBox.innerHTML += `<div style="background: #e9f5db; padding: 10px; border-radius: 1rem; align-self: flex-start; font-size: 1.6rem; color: #4f5d2f;">${textoFormateado}</div>`;
+                    estado = datos.estado;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            } catch (error) {
+                console.error('Error al comunicar con el servidor:', error);
+                chatBox.innerHTML += `<div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 1rem; align-self: flex-start; font-size: 1.6rem;">No hay conexión con el servidor en la nube.</div>`;
+            }
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                enviarMensaje();
+            }
+        });
+    </script>
 </body>
 </html>
