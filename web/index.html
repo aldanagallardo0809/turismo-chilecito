@@ -126,7 +126,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                const respuesta = await fetch('/chat', {
+                const respuesta = await fetch('https://turismo-chilecito.onrender.com/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ mensaje: mensaje, estado: estado })
