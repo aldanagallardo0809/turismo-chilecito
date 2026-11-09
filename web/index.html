@@ -5,9 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turismo Chilecito - La Rioja</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <!-- Enlace de fuentes y CSS estricto del dossier -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap">
     <link rel="stylesheet" href="cuatrimestral css.css">
 </head>
 <body>
@@ -91,65 +90,23 @@
         <p>Turismo Chilecito - Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Sección del Chat Bot adaptada al proyecto escolar -->
-    <div id="chat-container" style="max-width: 600px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <h3>Asistente Turístico de Chilecito</h3>
-        <div id="chat-box" style="height: 300px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #f9f9f9; display: flex; flex-direction: column; gap: 8px;">
-            <div style="background: #e2f0d9; padding: 8px; border-radius: 4px; align-self: flex-start;">
-                Hola soy tu asistente turístico de Chilecito La Rioja<br>
-                --- ¿Que deseas pedir? ---<br>
-                1. Lugares turisticos<br>
-                2. Lugares para comer<br>
-                3. Lugares para pasar el rato<br>
-                4. Salir
-            </div>
+    <!-- Sección de formulario adaptada a las etiquetas básicas explicadas en el dossier (sección 2.3 y 2.6) -->
+    <section>
+        <div class="card-marco">
+            <h2 class="sub-title">Contacto y Consultas</h2>
+            <p>Escribinos tu nombre y consulta para recibir más información sobre el destino.</p>
+            
+            <form>
+                <p>Nombre:</p>
+                <input type="text" placeholder="Tu nombre aquí" style="width: 100%; padding: 10px; margin-bottom: 15px;">
+                
+                <p>Correo electrónico:</p>
+                <input type="email" placeholder="correo@ejemplo.com" style="width: 100%; padding: 10px; margin-bottom: 15px;">
+                
+                <button type="submit" style="padding: 10px 20px; background: var(--title-color); color: white; border: none;">Enviar Mensaje</button>
+            </form>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="userInput" placeholder="Escribí tu opción (1, 2, 3 o 4)..." style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" autocomplete="off" />
-            <button onclick="enviarMensaje()" style="padding: 10px 20px; background: #385e35; color: white; border: none; border-radius: 4px; cursor: pointer;">Enviar</button>
-        </div>
-    </div>
+    </section>
 
-    <script>
-        let estado = {};
-
-        async function enviarMensaje() {
-            const input = document.getElementById('userInput');
-            const chatBox = document.getElementById('chat-box');
-            const mensaje = input.value.trim();
-
-            if (!mensaje) return;
-
-            // Mostrar mensaje del usuario
-            chatBox.innerHTML += `<div style="background: #d9e1f2; padding: 8px; border-radius: 4px; align-self: flex-end;">${mensaje}</div>`;
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                const respuesta = await fetch('https://turismo-chilecito.onrender.com/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ mensaje: mensaje, estado: estado })
-                });
-
-                const datos = await respuesta.json();
-                if (datos.respuesta) {
-                    const textoFormateado = datos.respuesta.replace(/\n/g, '<br>');
-                    chatBox.innerHTML += `<div style="background: #e2f0d9; padding: 8px; border-radius: 4px; align-self: flex-start;">${textoFormateado}</div>`;
-                    estado = datos.estado;
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                }
-            } catch (error) {
-                console.error('Error al comunicar con el servidor:', error);
-                chatBox.innerHTML += `<div style="background: #f8d7da; color: #721c24; padding: 8px; border-radius: 4px; align-self: flex-start;">No hay conexión con el servidor. ¿Está corriendo servidor.py?</div>`;
-            }
-        }
-
-        document.getElementById('userInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                enviarMensaje();
-            }
-        });
-    </script>
 </body>
 </html>
