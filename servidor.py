@@ -1,23 +1,18 @@
-from flask import Flask, request, jsonify, send_from_directory
-from asistente import responder, estado_inicial
+from flask import Flask, request, jsonify
+from flask_cors import CORS  # <--- 1. Importar la librería
+from asistente import obtener_respuesta_asistente
 
-app = Flask(__name__, static_folder='web', static_url_path='')
-
-@app.route('/')
-def inicio():
-    return send_from_directory('web', 'index.html')
+app = Flask(__name__)
+CORS(app)  # <--- 2. Habilitar CORS para permitir la conexión desde GitHub Pages
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    datos = request.get_json(silent=True) or {}
-    mensaje = (datos.get('mensaje') or '').strip()
-    estado = datos.get('estado') or estado_inicial()
+    datos = request.get_json()
+    mensaje = datos.get('mensaje', '')
+    estado = datos.get('estado', {})
     
-    if not mensaje:
-        return jsonify(error='mensaje vacio'), 400
-        
-    respuesta, estado = responder(mensaje, estado)
-    return jsonify(respuesta=respuesta, estado=estado)
+    respuesta, nuevo_estado = obtener_respuesta_asistente(mensaje, estado)
+    return jsonify({'respuesta': respuesta, 'estado': nuevo_estado})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
